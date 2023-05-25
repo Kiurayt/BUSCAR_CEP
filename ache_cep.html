@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <input type="text" id="cepInput" placeholder="Digite o CEP">
+  <button onclick="consultarCEP()">Consultar</button>
+
+  <p id="rua"></p>
+  <p id="bairro"></p>
+  <p id="cidade"></p>
+  <p id="estado"></p>
+  <p id="ddd"></p>
+  
+  <script>
+    function obterInformacoesRua(cep) {
+      cep = cep.replace(/\D/g, '');
+
+      if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.erro) {
+              document.getElementById('rua').innerHTML = 'Rua: ' + data.logradouro;
+              document.getElementById('bairro').innerHTML = 'Bairro: ' + data.bairro;
+              document.getElementById('cidade').innerHTML = 'Cidade: ' + data.localidade;
+              document.getElementById('estado').innerHTML = 'Estado: ' + data.uf;
+              document.getElementById('ddd').innerHTML = 'DDD: ' + data.ddd;
+            } else {
+              document.getElementById('rua').innerHTML = 'CEP não encontrado.';
+              document.getElementById('bairro').innerHTML = '';
+              document.getElementById('cidade').innerHTML = '';
+              document.getElementById('estado').innerHTML = '';
+              document.getElementById('ddd').innerHTML = '';
+            }
+          })
+          .catch(error => {
+            document.getElementById('rua').innerHTML = 'Ocorreu um erro: ' + error;
+            document.getElementById('bairro').innerHTML = '';
+            document.getElementById('cidade').innerHTML = '';
+            document.getElementById('estado').innerHTML = '';
+            document.getElementById('ddd').innerHTML = '';
+          });
+      } else {
+        document.getElementById('rua').innerHTML = 'CEP inválido. Digite novamente.';
+        document.getElementById('bairro').innerHTML = '';
+        document.getElementById('cidade').innerHTML = '';
+        document.getElementById('estado').innerHTML = '';
+        document.getElementById('ddd').innerHTML = '';
+      }
+    }
+
+    function consultarCEP() {
+      var cepInput = document.getElementById('cepInput');
+      var cep = cepInput.value;
+      obterInformacoesRua(cep);
+    }
+  </script>
+</body>
+</html>
